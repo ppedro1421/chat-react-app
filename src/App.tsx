@@ -23,6 +23,7 @@ function App() {
   const [message, setMessage] = useState<string>("");
 
   const msgRef = useRef<HTMLInputElement>(null);
+  const scrollref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     socket?.on("new-user", (user) => {
@@ -41,6 +42,10 @@ function App() {
       };
     });
   }, [socket]);
+
+  useEffect(() => {
+    scrollref.current?.scrollIntoView();
+  }, [messages.length]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -66,6 +71,7 @@ function App() {
             </div>
           </div>
         ))}
+        <div ref={scrollref} />
       </div>
       <form id="chat" onSubmit={handleSubmit}>
         <div className="input-container">
@@ -87,7 +93,7 @@ function App() {
     let socket = null;
     try {
       if (USERS.some((user) => user.username === name && user.password === pass)) {
-        socket = io("http://localhost:4000");
+        socket = io("http://192.168.1.108:4000");
         socket.emit("new-user", name);
         setSocket(socket);
         setName("");
